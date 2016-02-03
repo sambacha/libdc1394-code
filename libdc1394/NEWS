@@ -1,6 +1,15 @@
 Release information and news:
 -----------------------------
 
+-- 2.2.4
+   - Add USB IDs for some Point Grey cameras 
+   - Re-activate the EdgeSense debayering algorithm (patent has expired)
+   - USB-captured frames now have a valid timestamp
+   - Look for USB enpoints on all interfaces
+
+-- 2.2.3
+   - Add USB IDs for some Point Grey cameras
+
 -- 2.2.1
    - all files are now under the LGPL2 license
    - Don't expose internal symbols
