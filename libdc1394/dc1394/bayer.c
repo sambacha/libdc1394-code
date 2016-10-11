@@ -773,9 +773,12 @@ dc1394_bayer_EdgeSense(const uint8_t *restrict bayer, uint8_t *restrict rgb, int
 dc1394error_t
 dc1394_bayer_Downsample(const uint8_t *restrict bayer, uint8_t *restrict rgb, int sx, int sy, int tile)
 {
-    uint8_t *outR, *outG, *outB;
-    register int i, j;
-    int tmp;
+	uint8_t *outR, *outG, *outB;
+	register int i, j;
+	uint tmp;
+	int st=sx*sy;
+	int p;
+	int sx2=sx<<1;
 
     switch (tile) {
     case DC1394_COLOR_FILTER_GRBG:
@@ -791,33 +794,35 @@ dc1394_bayer_Downsample(const uint8_t *restrict bayer, uint8_t *restrict rgb, in
         outB = &rgb[0];
         break;
     default:
-      return DC1394_INVALID_COLOR_FILTER;
+		return DC1394_INVALID_COLOR_FILTER;
     }
 
     switch (tile) {
     case DC1394_COLOR_FILTER_GRBG:        //---------------------------------------------------------
     case DC1394_COLOR_FILTER_GBRG:
-        for (i = 0; i < sy*sx; i += (sx<<1)) {
+        for (i = 0; i < st; i += sx2) {
             for (j = 0; j < sx; j += 2) {
-                tmp = ((bayer[i + j] + bayer[i + sx + j + 1]) >> 1);
-                CLIP(tmp, outG[((i >> 2) + (j >> 1)) * 3]);
-                tmp = bayer[i + j + 1];
-                CLIP(tmp, outR[((i >> 2) + (j >> 1)) * 3]);
-                tmp = bayer[i + sx + j];
-                CLIP(tmp, outB[((i >> 2) + (j >> 1)) * 3]);
+				p=((i >> 2) + (j >> 1)) * 3;
+                tmp = bayer[i + j];
+				tmp+= bayer[i + sx + j + 1];
+				tmp>>=1;
+                outG[p] = (uint8_t)tmp;
+                outR[p] = bayer[i + j + 1];
+                outB[p] = bayer[i + sx + j];
             }
         }
         break;
     case DC1394_COLOR_FILTER_BGGR:        //---------------------------------------------------------
     case DC1394_COLOR_FILTER_RGGB:
-        for (i = 0; i < sy*sx; i += (sx<<1)) {
+        for (i = 0; i < st; i += sx2) {
             for (j = 0; j < sx; j += 2) {
-                tmp = ((bayer[i + sx + j] + bayer[i + j + 1]) >> 1);
-                CLIP(tmp, outG[((i >> 2) + (j >> 1)) * 3]);
-                tmp = bayer[i + sx + j + 1];
-                CLIP(tmp, outR[((i >> 2) + (j >> 1)) * 3]);
-                tmp = bayer[i + j];
-                CLIP(tmp, outB[((i >> 2) + (j >> 1)) * 3]);
+				p=((i >> 2) + (j >> 1)) * 3;
+                tmp = bayer[i + sx + j];
+				tmp+= bayer[i + j + 1];
+				tmp>>= 1;
+                outG[p] = (uint8_t)tmp;
+                outR[p] = bayer[i + sx + j + 1];
+                outB[p] = bayer[i + j];
             }
         }
         break;
@@ -1589,6 +1594,9 @@ dc1394_bayer_Downsample_uint16(const uint16_t *restrict bayer, uint16_t *restric
     uint16_t *outR, *outG, *outB;
     register int i, j;
     int tmp;
+	int st=sx*sy;
+	int sx2=sx<<1;
+	int p;
 
     switch (tile) {
     case DC1394_COLOR_FILTER_GRBG:
@@ -1610,36 +1618,35 @@ dc1394_bayer_Downsample_uint16(const uint16_t *restrict bayer, uint16_t *restric
     switch (tile) {
     case DC1394_COLOR_FILTER_GRBG:        //---------------------------------------------------------
     case DC1394_COLOR_FILTER_GBRG:
-        for (i = 0; i < sy*sx; i += (sx<<1)) {
+        for (i = 0; i < st; i += sx2) {
             for (j = 0; j < sx; j += 2) {
-                tmp =
-                    ((bayer[i + j] + bayer[i + sx + j + 1]) >> 1);
-                CLIP16(tmp, outG[((i >> 2) + (j >> 1)) * 3], bits);
-                tmp = bayer[i + sx + j + 1];
-                CLIP16(tmp, outR[((i >> 2) + (j >> 1)) * 3], bits);
-                tmp = bayer[i + sx + j];
-                CLIP16(tmp, outB[((i >> 2) + (j >> 1)) * 3], bits);
+				p=((i >> 2) + (j >> 1)) * 3;
+                tmp = bayer[i + j];
+				tmp+= bayer[i + sx + j + 1];
+				tmp>>=1;
+                outG[p] = (uint16_t)tmp;
+                outR[p] = bayer[i + j + 1];
+                outB[p] = bayer[i + sx + j];
             }
         }
         break;
     case DC1394_COLOR_FILTER_BGGR:        //---------------------------------------------------------
     case DC1394_COLOR_FILTER_RGGB:
-        for (i = 0; i < sy*sx; i += (sx<<1)) {
+        for (i = 0; i < st; i += sx2) {
             for (j = 0; j < sx; j += 2) {
-                tmp =
-                    ((bayer[i + sx + j] + bayer[i + j + 1]) >> 1);
-                CLIP16(tmp, outG[((i >> 2) + (j >> 1)) * 3], bits);
-                tmp = bayer[i + sx + j + 1];
-                CLIP16(tmp, outR[((i >> 2) + (j >> 1)) * 3], bits);
-                tmp = bayer[i + j];
-                CLIP16(tmp, outB[((i >> 2) + (j >> 1)) * 3], bits);
+				p=((i >> 2) + (j >> 1)) * 3;
+                tmp = bayer[i + sx + j];
+				tmp+= bayer[i + j + 1];
+				tmp>>= 1;
+                outG[p] = (uint16_t)tmp;
+                outR[p] = bayer[i + sx + j + 1];
+                outB[p] = bayer[i + j];
             }
         }
         break;
     }
 
     return DC1394_SUCCESS;
-
 }
 
 /* coriander's Bayer decoding */
