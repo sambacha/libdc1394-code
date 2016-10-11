@@ -142,9 +142,9 @@ dnl     increment CURRENT, and set REVISION to 0.
 dnl  3. If the interface changes consist solely of additions, increment AGE.
 dnl  4. If the interface has removed or changed elements, set AGE to 0.
 dnl ---------------------------------------------------------------------------
-lt_current=23
-lt_revision=11
-lt_age=1
+lt_current=24
+lt_revision=0
+lt_age=2
 
 AC_SUBST(lt_current)
 AC_SUBST(lt_revision)

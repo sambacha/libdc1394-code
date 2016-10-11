@@ -191,6 +191,15 @@ dc1394_camera_print_info(dc1394camera_t *camera, FILE* fd)
     return DC1394_SUCCESS;
 }
 
+dc1394error_t
+dc1394_camera_get_platform_string(dc1394camera_t *camera, const char **platform)
+{
+    dc1394camera_priv_t * cpriv = DC1394_CAMERA_PRIV (camera);
+	*platform=cpriv->platform->name;
+
+	return DC1394_SUCCESS;
+}
+
 /*****************************************************
  dc1394_get_camera_feature_set
 
