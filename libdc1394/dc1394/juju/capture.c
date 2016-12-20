@@ -311,6 +311,12 @@ dc1394_juju_capture_dequeue (platform_camera_t * craw,
     struct juju_frame *f;
     int err, len;
     struct fw_cdev_get_cycle_timer tm;
+
+	if(craw->frames==NULL || craw->capture_is_set==0) {
+		*frame_return=NULL;
+		return DC1394_CAPTURE_IS_NOT_SET;
+	}
+
     struct {
         struct fw_cdev_event_iso_interrupt i;
         __u32 headers[craw->frames[0].frame.packets_per_frame*2 + 16];

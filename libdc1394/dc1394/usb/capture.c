@@ -423,6 +423,11 @@ dc1394_usb_capture_dequeue (platform_camera_t * craw,
             || (policy > DC1394_CAPTURE_POLICY_MAX))
         return DC1394_INVALID_CAPTURE_POLICY;
 
+	if(craw->buffer==NULL || craw->capture_is_set==0) {
+		*frame_return=NULL;
+		return DC1394_CAPTURE_IS_NOT_SET;
+	}
+
     /* default: return NULL in case of failures or lack of frames */
     *frame_return = NULL;
 
