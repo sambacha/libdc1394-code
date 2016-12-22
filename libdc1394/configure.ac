@@ -1,6 +1,6 @@
 # process this file with autoconf to get a configure script
 AC_PREREQ([2.6.0])
-AC_INIT([libdc1394],[2.2.4],[libdc1394-devel@lists.sf.net])
+AC_INIT([libdc1394],[2.2.5],[libdc1394-devel@lists.sf.net])
 AC_CONFIG_SRCDIR([dc1394/control.c])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -143,7 +143,7 @@ dnl  3. If the interface changes consist solely of additions, increment AGE.
 dnl  4. If the interface has removed or changed elements, set AGE to 0.
 dnl ---------------------------------------------------------------------------
 lt_current=24
-lt_revision=0
+lt_revision=1
 lt_age=2
 
 AC_SUBST(lt_current)
