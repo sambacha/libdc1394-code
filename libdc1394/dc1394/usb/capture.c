@@ -197,6 +197,8 @@ dc1394_usb_capture_setup(platform_camera_t *craw, uint32_t num_dma_buffers,
         dc1394_usb_capture_stop (craw);
         return DC1394_FAILURE;
     }
+	if (libusb_get_device_speed(libusb_get_device(craw->handle)) == LIBUSB_SPEED_SUPER)
+		proto.total_bytes = proto.image_bytes;
 
     if (pipe (craw->notify_pipe) < 0) {
         dc1394_usb_capture_stop (craw);
